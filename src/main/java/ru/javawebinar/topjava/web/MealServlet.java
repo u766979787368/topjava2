@@ -31,9 +31,6 @@ public class MealServlet extends HttpServlet {
         switch (action) {
             case "delete" : {
                 dao.delete(Integer.parseInt(id));
-                List<MealTo> mealTos = MealsUtil.filteredByStreams(dao.getAll(), LocalTime.MIN, LocalTime.MAX, 2000);
-                request.setAttribute("meals", mealTos);
-                response.sendRedirect("meals");
                 break;
             }
 
@@ -57,7 +54,7 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String id = request.getParameter("id") == null? "-1" : request.getParameter("id");
+        String id = request.getParameter("id").equals("")? "-1" : request.getParameter("id");
         String date = request.getParameter("date");
         String time = request.getParameter("time");
         String description = request.getParameter("description");
