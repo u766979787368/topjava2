@@ -31,6 +31,7 @@ public class MealServlet extends HttpServlet {
         switch (action) {
             case "delete" : {
                 dao.delete(Integer.parseInt(id));
+                response.sendRedirect("meals");
                 break;
             }
 
@@ -42,18 +43,21 @@ public class MealServlet extends HttpServlet {
                 request.setAttribute("description", meal.getDescription());
                 request.setAttribute("calories", meal.getCalories());
                 request.getRequestDispatcher("/addAndUpdate.jsp").forward(request, response);
+                break;
             }
             default : {
+                List<MealTo> mealTos = MealsUtil.filteredByStreams(dao.getAll(), LocalTime.MIN, LocalTime.MAX, 2000);
+                request.setAttribute("meals", mealTos);
+                request.getRequestDispatcher("/meals.jsp").forward(request, response);
             }
         }
 
-        List<MealTo> mealTos = MealsUtil.filteredByStreams(dao.getAll(), LocalTime.MIN, LocalTime.MAX, 2000);
-        request.setAttribute("meals", mealTos);
-        request.getRequestDispatcher("/meals.jsp").forward(request, response);
+
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id").equals("")? "-1" : request.getParameter("id");
         String date = request.getParameter("date");
         String time = request.getParameter("time");
