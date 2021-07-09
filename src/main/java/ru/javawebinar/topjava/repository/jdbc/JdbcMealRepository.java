@@ -20,16 +20,16 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@Repository
-public class JdbcMealRepository implements MealRepository {
 
-    private static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
+public abstract class JdbcMealRepository implements MealRepository {
 
-    private final JdbcTemplate jdbcTemplate;
+    protected static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
 
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    protected final JdbcTemplate jdbcTemplate;
 
-    private final SimpleJdbcInsert insertMeal;
+    protected final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    protected final SimpleJdbcInsert insertMeal;
 
     @Autowired
     Environment env;
@@ -51,13 +51,8 @@ public class JdbcMealRepository implements MealRepository {
                 .addValue("id", meal.getId())
                 .addValue("description", meal.getDescription())
                 .addValue("calories", meal.getCalories())
-                .addValue("user_id", userId);
-
-        if (env.acceptsProfiles(org.springframework.core.env.Profiles.of(Profiles.HSQL_DB))) {
-            map.addValue("date_time", Timestamp.valueOf(meal.getDateTime()));
-        } else {
-            map.addValue("date_time", meal.getDateTime());
-        }
+                .addValue("user_id", userId)
+                .addValue("date_time", meal.getDateTime());
 
 
         if (meal.isNew()) {
@@ -94,12 +89,6 @@ public class JdbcMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        if (env.acceptsProfiles(org.springframework.core.env.Profiles.of(Profiles.HSQL_DB))) {
-            return jdbcTemplate.query(
-                    "SELECT * FROM meals WHERE user_id=?  AND date_time >=  ? AND date_time < ? ORDER BY date_time DESC",
-                    ROW_MAPPER, userId, Timestamp.valueOf(startDateTime), Timestamp.valueOf(endDateTime));
-        }
-
         return jdbcTemplate.query(
                 "SELECT * FROM meals WHERE user_id=?  AND date_time >=  ? AND date_time < ? ORDER BY date_time DESC",
                 ROW_MAPPER, userId, startDateTime, endDateTime);
