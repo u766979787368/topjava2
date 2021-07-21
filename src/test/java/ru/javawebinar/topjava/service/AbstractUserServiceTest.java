@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
 import ru.javawebinar.topjava.repository.JpaUtil;
 
 import static org.junit.Assert.assertThrows;
@@ -31,7 +32,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     private CacheManager cacheManager;
 
-    @Autowired (required = false)
+    @Autowired(required = false)
     protected JpaUtil jpaUtil;
 
     @Before
@@ -40,7 +41,6 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         if (jpaUtil != null) {
             jpaUtil.clear2ndLevelHibernateCache();
         }
-
     }
 
     @Test
