@@ -33,12 +33,14 @@ public class JspMealController extends AbstractMealController {
     @GetMapping("/update")
     public String updateMeal (HttpServletRequest request, Model model) {
         model.addAttribute("meal", get(getId(request)));
+        model.addAttribute("action", "edit");
         return "mealForm";
     }
 
     @GetMapping("/create")
     public String createMeal (HttpServletRequest request, Model model) {
         model.addAttribute("meal", new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000));
+        model.addAttribute("action", "create");
         return "mealForm";
     }
 
