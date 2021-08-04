@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.web.meal;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -13,6 +14,8 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,10 +30,21 @@ import static ru.javawebinar.topjava.util.MealsUtil.getTos;
 
 class MealRestControllerTest extends AbstractControllerTest {
 
+    @Autowired
+    ConversionService conversionService;
+
     private static final String REST_URL = MealRestController.REST_URL + '/';
 
     @Autowired
     private MealService mealService;
+
+    @Test
+    void conversionServiceTest() {
+        LocalDate localDate = conversionService.convert("", LocalDate.class);
+        LocalTime localTime = conversionService.convert("", LocalTime.class);
+        assertThat(localDate).isNull();
+        assertThat(localTime).isNull();
+    }
 
     @Test
     void get() throws Exception {
@@ -88,12 +102,30 @@ class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getBetween() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "filter?startDateTime=2020-01-30T00:00:00&endDateTime=2020-01-30T23:59:59"))
+    void getBetweenDateTime() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter?" +
+                "startDate=2020-01-30&" +
+                "endDate=2020-01-30&" +
+                "startTime=00:00&" +
+                "endTime=23:59"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(result -> assertThat(JsonUtil.readValues(result.getResponse().getContentAsString(), MealTo.class))
                         .usingRecursiveComparison().ignoringFields("excess").isEqualTo(getTos(Arrays.asList(meal3, meal2, meal1), DEFAULT_CALORIES_PER_DAY)));
+    }
+
+    @Test
+    void getBetweenDateTimeNull() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter?" +
+                "startDate=&" +
+                "endDate=&" +
+                "startTime=&" +
+                "endTime="))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(result -> assertThat(JsonUtil.readValues(result.getResponse().getContentAsString(), MealTo.class))
+                        .usingRecursiveComparison().isEqualTo(getTos(meals, DEFAULT_CALORIES_PER_DAY)));
     }
 }
