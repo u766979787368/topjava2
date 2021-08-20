@@ -28,6 +28,7 @@ function deleteRow(id) {
         type: "DELETE"
     }).done(function () {
         updateTable();
+        mealFilter();
         successNoty("Deleted");
     });
 }
@@ -46,6 +47,7 @@ function save() {
     }).done(function () {
         $("#editRow").modal("hide");
         updateTable();
+        mealFilter();
         successNoty("Saved");
     });
 }
