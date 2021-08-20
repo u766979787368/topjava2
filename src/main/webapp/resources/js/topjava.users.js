@@ -45,3 +45,20 @@ $(function () {
         })
     );
 });
+
+function toggleCheckbox(element, id) {
+    let message;
+    if (element.checked) {
+        message = "Checked";
+    } else {
+        message = "Unchecked";
+    }
+        $.ajax({
+            type: "GET",
+            url: "rest/admin/users/" + id + "/enable",
+            data: "enable=" + element.checked
+        }).done(function () {
+            updateTable();
+            successNoty(message);
+        });
+}
