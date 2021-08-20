@@ -52,3 +52,8 @@ function mealFilter() {
         successNoty("Filtered");
     });
 }
+
+function cancelFilter() {
+    filterForm.find(":input").val("");
+    updateTable();
+}
