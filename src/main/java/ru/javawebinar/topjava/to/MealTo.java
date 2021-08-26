@@ -1,7 +1,11 @@
 package ru.javawebinar.topjava.to;
 
+import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.beans.ConstructorProperties;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -9,15 +13,21 @@ import java.util.Objects;
 public class MealTo extends BaseTo {
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @NotNull
     private LocalDateTime dateTime;
 
+    @NotBlank
+    @Size(min = 2, max = 120)
     private String description;
 
-    private int calories;
+    @NotNull
+    @Range(min = 10, max = 5000)
+    private Integer calories;
 
     private boolean excess;
 
     public MealTo() {
+        this.excess = false;
     }
 
     public void setDateTime(LocalDateTime dateTime) {
@@ -28,7 +38,7 @@ public class MealTo extends BaseTo {
         this.description = description;
     }
 
-    public void setCalories(int calories) {
+    public void setCalories(Integer calories) {
         this.calories = calories;
     }
 
@@ -62,7 +72,7 @@ public class MealTo extends BaseTo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MealTo mealTo = (MealTo) o;
-        return calories == mealTo.calories &&
+        return calories.equals(mealTo.calories) &&
                 excess == mealTo.excess &&
                 Objects.equals(id, mealTo.id) &&
                 Objects.equals(dateTime, mealTo.dateTime) &&
