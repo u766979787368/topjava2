@@ -45,4 +45,11 @@ public class MealsUtil {
     public static MealTo createTo(Meal meal, boolean excess) {
         return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
+
+    public static Meal updateFromTo(Meal meal, MealTo mealTo) {
+        meal.setCalories(mealTo.getCalories());
+        meal.setDateTime(mealTo.getDateTime());
+        meal.setDescription(mealTo.getDescription());
+        return meal;
+    }
 }
