@@ -23,7 +23,14 @@ function updateRow(id) {
     $("#modalTitle").html(i18n["editTitle"]);
     $.get(ctx.ajaxUrl + id, function (data) {
         $.each(data, function (key, value) {
-            form.find("input[name='" + key + "']").val(value);
+            if (key === 'dateTime') {
+                let retDate;
+                retDate = value.replace("T", " ")
+                form.find("input[name='" + key + "']").val(retDate.substring(0, 16));
+            } else {
+                form.find("input[name='" + key + "']").val(value);
+            }
+
         });
         $('#editRow').modal();
     });
@@ -97,3 +104,24 @@ function failNoty(jqXHR) {
     });
     failedNote.show()
 }
+
+$('#startDate').datetimepicker({
+    timepicker: false,
+    format:'Y-m-d'
+});
+$('#endDate').datetimepicker({
+    timepicker: false,
+    format:'Y-m-d'
+});
+$('#startTime').datetimepicker({
+    datepicker: false,
+    format:'H:00'
+});
+$('#endTime').datetimepicker({
+    datepicker: false,
+    format:'H:00'
+});
+$('#dateTime').datetimepicker({
+    format:'Y-m-d H:i'
+});
+
