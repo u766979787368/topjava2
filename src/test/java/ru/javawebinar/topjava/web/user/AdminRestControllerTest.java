@@ -99,6 +99,19 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void updateWithInvalidation() throws Exception {
+        for (UserTo userTo : getInvalidUsersTo()) {
+            userTo.setId(START_SEQ);
+            perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(userHttpBasic(admin))
+                    .content(JsonUtil.writeValue(userTo)))
+                    .andDo(print())
+                    .andExpect(status().isUnprocessableEntity());
+        }
+    }
+
+    @Test
     void createWithLocation() throws Exception {
         User newUser = getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
@@ -116,21 +129,8 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     void createWithInvalidation() throws Exception {
-        for(UserTo userTo: getInvalidUsersTo()) {
+        for (UserTo userTo : getInvalidUsersTo()) {
             perform(MockMvcRequestBuilders.post(REST_URL)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .with(userHttpBasic(admin))
-                    .content(JsonUtil.writeValue(userTo)))
-                    .andDo(print())
-                    .andExpect(status().isUnprocessableEntity());
-        }
-    }
-
-    @Test
-    void updateWithInvalidation() throws Exception {
-        for(UserTo userTo: getInvalidUsersTo()) {
-            userTo.setId(START_SEQ);
-            perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(userHttpBasic(admin))
                     .content(JsonUtil.writeValue(userTo)))

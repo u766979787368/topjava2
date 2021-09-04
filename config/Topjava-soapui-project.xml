@@ -59,7 +59,7 @@
                 </con:representation>
                 <con:representation type="FAULT">
                     <con:mediaType>text/html;charset=utf-8</con:mediaType>
-                    <con:status>500</con:status>
+                    <con:status>500 401</con:status>
                     <con:params/>
                     <con:element>html</con:element>
                 </con:representation>
@@ -416,7 +416,7 @@
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
                     <con:jmsPropertyConfig/>
                     <con:parameters/>
-                </con:request>
+                <con:parameterOrder/></con:request>
             </con:method>
             <con:method name="" id="075cc00f-1be2-4ead-9f1f-f81b7c226cde" method="POST">
                 <con:settings/>
@@ -450,7 +450,7 @@
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
                     <con:jmsPropertyConfig/>
                     <con:parameters/>
-                </con:request>
+                <con:parameterOrder/></con:request>
             </con:method>
         </con:resource>
         <con:resource name="meal" path="/topjava/rest/profile/meals/100002" id="ef18ccb6-f9f1-4062-937c-0410f64f79de">
