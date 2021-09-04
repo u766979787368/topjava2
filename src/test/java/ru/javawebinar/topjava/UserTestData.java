@@ -2,6 +2,7 @@ package ru.javawebinar.topjava;
 
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import java.util.Collections;
@@ -37,6 +38,14 @@ public class UserTestData {
 
     public static User getNew() {
         return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
+    }
+
+    public static List<UserTo> getInvalidUsersTo() {
+        return List.of(
+                new UserTo(null, "", "qwerty@qwery.com", "123456", 2000),
+                new UserTo(null, "Andrew", "", "123456", 2000),
+                new UserTo(null, "Andrew", "qwerty@qwery.com", "", 2000),
+                new UserTo(null, "Andrew", "qwerty@qwery.com", "123456", 0));
     }
 
     public static User getUpdated() {

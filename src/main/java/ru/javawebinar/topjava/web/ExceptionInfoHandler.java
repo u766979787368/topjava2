@@ -7,6 +7,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,6 +54,12 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(ValidationException.class)
     public ErrorInfo validationError(HttpServletRequest req, ValidationException e) {
         return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ErrorInfo validationError(HttpServletRequest req, MethodArgumentNotValidException e) {
+        return new ErrorInfo(req.getRequestURL(), VALIDATION_ERROR, ValidationUtil.getErrorResponse(e.getBindingResult()));
     }
 
     //    https://stackoverflow.com/questions/538870/should-private-helper-methods-be-static-if-they-can-be-static

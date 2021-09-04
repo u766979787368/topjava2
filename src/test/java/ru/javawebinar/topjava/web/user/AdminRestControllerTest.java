@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
+import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
@@ -19,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.*;
+import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 class AdminRestControllerTest extends AbstractControllerTest {
 
@@ -111,6 +112,31 @@ class AdminRestControllerTest extends AbstractControllerTest {
         newUser.setId(newId);
         MATCHER.assertMatch(created, newUser);
         MATCHER.assertMatch(userService.get(newId), newUser);
+    }
+
+    @Test
+    void createWithInvalidation() throws Exception {
+        for(UserTo userTo: getInvalidUsersTo()) {
+            perform(MockMvcRequestBuilders.post(REST_URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(userHttpBasic(admin))
+                    .content(JsonUtil.writeValue(userTo)))
+                    .andDo(print())
+                    .andExpect(status().isUnprocessableEntity());
+        }
+    }
+
+    @Test
+    void updateWithInvalidation() throws Exception {
+        for(UserTo userTo: getInvalidUsersTo()) {
+            userTo.setId(START_SEQ);
+            perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(userHttpBasic(admin))
+                    .content(JsonUtil.writeValue(userTo)))
+                    .andDo(print())
+                    .andExpect(status().isUnprocessableEntity());
+        }
     }
 
     @Test
