@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.to.UserTo;
@@ -76,6 +78,17 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void registerWithIDoubleEmail() throws Exception {
+        UserTo userTo = new UserTo(null, "user", user.getEmail(), "123456", 1500);
+            perform(MockMvcRequestBuilders.post(REST_URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(JsonUtil.writeValue(userTo)))
+                    .andDo(print())
+                    .andExpect(status().isConflict());
+    }
+
+    @Test
     void update() throws Exception {
         UserTo updatedTo = new UserTo(null, "newName", "newemail@ya.ru", "newPassword", 1500);
         perform(MockMvcRequestBuilders.put(REST_URL).contentType(MediaType.APPLICATION_JSON)
@@ -96,6 +109,17 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                     .andDo(print())
                     .andExpect(status().isUnprocessableEntity());
         }
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void updateWithDoubleEmail() throws Exception {
+        UserTo userTo = new UserTo(null, "userName", admin.getEmail(), "123456", 1500);
+        perform(MockMvcRequestBuilders.put(REST_URL).contentType(MediaType.APPLICATION_JSON)
+                    .with(userHttpBasic(user))
+                    .content(JsonUtil.writeValue(userTo)))
+                    .andDo(print())
+                    .andExpect(status().isConflict());
     }
 
     @Test

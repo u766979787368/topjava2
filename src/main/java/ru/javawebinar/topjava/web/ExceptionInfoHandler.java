@@ -73,8 +73,13 @@ public class ExceptionInfoHandler {
     private ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType) {
         Throwable rootCause = ValidationUtil.getRootCause(e);
         if (rootCause instanceof PSQLException) {
-            String message = messageSource.getMessage("user.exist", null, LocaleContextHolder.getLocale());
-            return new ErrorInfo(req.getRequestURL(), VALIDATION_ERROR, message);
+            if (rootCause.getMessage().contains("user_id, date_time")) {
+                String message = messageSource.getMessage("meal.exist", null, LocaleContextHolder.getLocale());
+                return new ErrorInfo(req.getRequestURL(), VALIDATION_ERROR, message);
+            } else if (rootCause.getMessage().contains("email")) {
+                String message = messageSource.getMessage("user.exist", null, LocaleContextHolder.getLocale());
+                return new ErrorInfo(req.getRequestURL(), VALIDATION_ERROR, message);
+            }
         }
         if (logException) {
             log.error(errorType + " at request " + req.getRequestURL(), rootCause);
